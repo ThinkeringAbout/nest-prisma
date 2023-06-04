@@ -29,4 +29,16 @@ export class UserController {
   async getAllUsers(): Promise<UserModel[]> {
     return this.userService.users({});
   }
+
+  @UseGuards(AuthGuard)
+  @Put('users/:id')
+  async updateUserInfo(
+    @Param('id') id: string,
+    @Body() userData: { name?: string; email?: string },
+  ): Promise<string> {
+    return this.userService.updateUser({
+      where: { id: Number(id) },
+      data: { name: userData.name, email: userData.email },
+    });
+  }
 }
