@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { User, Prisma } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
@@ -52,6 +57,25 @@ export class UserService {
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+
+  async updateUserPassword(data: {
+    email: string;
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<any> {
+    const user = await this.user({
+      email: { equals: data.email },
+    });
+    const isMatch = await bcrypt.compare(data.oldPassword, user.password);
+    if (!isMatch) {
+      throw new UnauthorizedException();
+    }
+    const hash = await bcrypt.hash(data.newPassword, 10);
+    await this.prisma.user.update({
+      where: { email: data.email },
+      data: { password: hash },
+    });
   }
 
   async updateUser(params: {

@@ -33,12 +33,29 @@ export class UserController {
   @UseGuards(AuthGuard)
   @Put('users/:id')
   async updateUserInfo(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() userData: { name?: string; email?: string },
   ): Promise<string> {
     return this.userService.updateUser({
       where: { id: Number(id) },
       data: { name: userData.name, email: userData.email },
+    });
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('users/change/password')
+  async updateUserPassword(
+    @Body()
+    userData: {
+      oldPassword: string;
+      email: string;
+      newPassword: string;
+    },
+  ): Promise<string> {
+    return this.userService.updateUserPassword({
+      email: userData.email,
+      oldPassword: userData.oldPassword,
+      newPassword: userData.newPassword,
     });
   }
 }
