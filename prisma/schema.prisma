@@ -16,6 +16,7 @@ model User {
   name String?
   password String @default("")
   posts Post[]
+  imgUrl String @default("tiger.png")
 }
 
 model Post {

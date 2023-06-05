@@ -7,11 +7,16 @@ import {
   Put,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User as UserModel } from '@prisma/client';
 import { BadRequestException } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { Helper } from 'src/helpers/filename';
 
 @Controller()
 export class UserController {
@@ -56,6 +61,22 @@ export class UserController {
       email: userData.email,
       oldPassword: userData.oldPassword,
       newPassword: userData.newPassword,
+    });
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './images/',
+        filename: Helper.customFileName,
+      }),
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File, @Body() id: string) {
+    this.userService.updateUser({
+      where: { id: Number(id) },
+      data: { imgUrl: file.filename },
     });
   }
 }

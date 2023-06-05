@@ -32,6 +32,7 @@ export class PostService {
         author: {
           select: {
             name: true,
+            imgUrl: true,
           },
         },
       },

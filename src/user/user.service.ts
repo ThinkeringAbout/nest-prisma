@@ -53,6 +53,7 @@ export class UserService {
       sub: resUser.id,
       username: resUser.name,
       email: resUser.email,
+      imgUrl: resUser.imgUrl,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
@@ -91,6 +92,7 @@ export class UserService {
       sub: user.id,
       username: user.name,
       email: user.email,
+      imgUrl: user.imgUrl,
     };
     return {
       access_token: await this.jwtService.signAsync(payload),
